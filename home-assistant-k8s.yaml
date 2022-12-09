@@ -1,0 +1,120 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: home-assistant
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: ha-pvc
+  namespace: home-assistant
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  volumeMode: Filesystem
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: home-assistant
+  namespace: home-assistant
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: privileged-rolebinding
+  namespace: home-assistant
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: 'system:openshift:scc:privileged'
+subjects:
+  - kind: ServiceAccount
+    name: home-assistant
+    namespace: home-assistant
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ha-config
+  namespace: home-assistant
+type: Opaque
+data:
+  configuration.yaml: IyBodHRwczovL3d3dy5ob21lLWFzc2lzdGFudC5pby9kb2NzL2NvbmZpZ3VyYXRpb24vCmRlZmF1bHRfY29uZmlnOgoKaHR0cDoKICB1c2VfeF9mb3J3YXJkZWRfZm9yOiB0cnVlCiAgdHJ1c3RlZF9wcm94aWVzOgogICAgLSAxMC4wLjAuMC84CiAgICAtIDE3Mi4xNi4wLjAvMTIKICAgIC0gMTkyLjE2OC4wLjAvMTYK
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: home-assistant
+  namespace: home-assistant
+  labels:
+    app: home-assistant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: home-assistant
+  template:
+    metadata:
+      labels:
+        app: home-assistant
+    spec:
+      containers:
+        - name: home-assistant
+          image: docker.io/homeassistant/home-assistant
+          ports:
+            - containerPort: 8123
+          securityContext:
+            allowPrivilegeEscalation: true
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: "/config"
+              name: ha-persistent-storage
+            - mountPath: "/config/configuration.yaml"
+              subPath: "configuration.yaml"
+              name: ha-config
+      volumes:
+        - name: ha-config
+          secret:
+            secretName: ha-config
+            defaultMode: 0777
+        - name: ha-persistent-storage
+          persistentVolumeClaim:
+            claimName: ha-pvc
+      serviceAccount: home-assistant
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: home-assistant
+  namespace: home-assistant
+spec:
+  type: ClusterIP
+  selector:
+    app: home-assistant
+  ports:
+    - name: https
+      protocol: TCP
+      port: 80
+      targetPort: 8123
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ha-ingress
+  namespace: home-assistant
+spec:
+  rules:
+  - host: home-assistant.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: home-assistant
+            port:
+              number: 80
