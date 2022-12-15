@@ -1,6 +1,6 @@
 # Home Assistant for Kubernetes
 
-## Installation
+## Kubernetes Installation 
 
 Customize Home Assistant [configuration]:
 ```
@@ -41,9 +41,17 @@ spec:
               number: 80
 ```
 
-Apply changes
+Create Kubernetes resources:
 ```
-kubectl apply -f home-assistant-k8s.yaml
+$ kubectl apply -f home-assistant-k8s.yaml
+```
+
+## Red Hat OpenShift Installation
+
+Instead of using [home-assistant-k8s.yaml], use [home-assistant-ocp.yaml].  Create an imagestream that tracks upstream image updates, along with the OpenShift resources:
+```
+$ oc import-image home-assistant --from=ghcr.io/home-assistant/home-assistant:latest --scheduled=true --confirm
+$ oc apply -f home-assistant-ocp.yaml
 ```
 
 ## License
@@ -51,3 +59,4 @@ GPLv3
 
 [configuration]: https://www.home-assistant.io/docs/configuration/
 [home-assistant-k8s.yaml]: home-assistant-k8s.yaml
+[home-assistant-ocp.yaml]: home-assistant-ocp.yaml
