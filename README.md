@@ -48,6 +48,8 @@ $ kubectl apply -f home-assistant-k8s.yaml
 
 ## Red Hat OpenShift Installation
 
+The application installation on Red Hat OpenShift leverages the use of imagestreams and ImageChange triggers on the DeploymentConfig to automatically update whenever a new image is available.  As a storage requirement, a [storageclass that supports ReadWriteMany] must be used.
+
 Instead of using [home-assistant-k8s.yaml], use [home-assistant-ocp.yaml].  Create an imagestream that tracks upstream image updates, along with the OpenShift resources:
 ```
 $ oc import-image home-assistant --from=ghcr.io/home-assistant/home-assistant:latest --scheduled=true --confirm
@@ -60,3 +62,4 @@ GPLv3
 [configuration]: https://www.home-assistant.io/docs/configuration/
 [home-assistant-k8s.yaml]: home-assistant-k8s.yaml
 [home-assistant-ocp.yaml]: home-assistant-ocp.yaml
+[storageclass that supports ReadWriteMany]: https://docs.openshift.com/container-platform/latest/storage/understanding-persistent-storage.html#pv-access-modes_understanding-persistent-storage
