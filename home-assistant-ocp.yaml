@@ -45,8 +45,8 @@ type: Opaque
 data:
   configuration.yaml: IyBodHRwczovL3d3dy5ob21lLWFzc2lzdGFudC5pby9kb2NzL2NvbmZpZ3VyYXRpb24vCmRlZmF1bHRfY29uZmlnOgoKaHR0cDoKICB1c2VfeF9mb3J3YXJkZWRfZm9yOiB0cnVlCiAgdHJ1c3RlZF9wcm94aWVzOgogICAgLSAxMC4wLjAuMC84CiAgICAtIDE3Mi4xNi4wLjAvMTIKICAgIC0gMTkyLjE2OC4wLjAvMTYK
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
 metadata:
   name: home-assistant
   namespace: home-assistant
@@ -55,8 +55,7 @@ metadata:
 spec:
   replicas: 1
   selector:
-    matchLabels:
-      app: home-assistant
+    app: home-assistant
   template:
     metadata:
       annotations:
@@ -87,6 +86,17 @@ spec:
           persistentVolumeClaim:
             claimName: ha-pvc
       serviceAccount: home-assistant
+  triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - home-assistant
+        from:
+          kind: ImageStreamTag
+          name: 'home-assistant:latest'
+          namespace: home-assistant
+    - type: ConfigChange
 ---
 apiVersion: v1
 kind: Service
