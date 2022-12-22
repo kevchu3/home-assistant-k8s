@@ -10,7 +10,7 @@ metadata:
   namespace: home-assistant
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 5Gi
@@ -56,6 +56,8 @@ spec:
   replicas: 1
   selector:
     app: home-assistant
+  strategy:
+    type: Recreate
   template:
     metadata:
       annotations:
