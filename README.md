@@ -8,7 +8,7 @@ $ vi configuration.yaml
 $ base64 -w 0 configuration.yaml
 ```
 
-Replace the configuration data in [home-assistant-k8s.yaml] Secret with the base64 output:
+Using the resource definitions provided in [home-assistant-k8s.yaml], replace the configuration data in the Secret with the base64 output:
 ```
 apiVersion: v1
 kind: Secret
@@ -48,9 +48,9 @@ $ kubectl apply -f home-assistant-k8s.yaml
 
 ## Red Hat OpenShift Installation
 
-The application installation on Red Hat OpenShift leverages the use of imagestreams and ImageChange triggers on the DeploymentConfig to automatically update whenever a new image is available.  As a storage requirement, a [storageclass that supports ReadWriteMany] must be used.
+The application installation on Red Hat OpenShift leverages the use of imagestreams and ImageChange triggers on the DeploymentConfig to automatically update whenever a new image is available.
 
-Instead of using [home-assistant-k8s.yaml], use [home-assistant-ocp.yaml].  Create an imagestream that tracks upstream image updates, along with the OpenShift resources:
+Instead of using the resource definitions in home-assistant-k8s.yaml, use [home-assistant-ocp.yaml].  Create an imagestream that tracks upstream image updates, along with the OpenShift resources:
 ```
 $ oc import-image home-assistant --from=ghcr.io/home-assistant/home-assistant:latest --scheduled=true --confirm
 $ oc apply -f home-assistant-ocp.yaml
@@ -62,4 +62,3 @@ GPLv3
 [configuration]: https://www.home-assistant.io/docs/configuration/
 [home-assistant-k8s.yaml]: home-assistant-k8s.yaml
 [home-assistant-ocp.yaml]: home-assistant-ocp.yaml
-[storageclass that supports ReadWriteMany]: https://docs.openshift.com/container-platform/latest/storage/understanding-persistent-storage.html#pv-access-modes_understanding-persistent-storage
