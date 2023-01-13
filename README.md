@@ -8,7 +8,7 @@ $ vi configuration.yaml
 $ base64 -w 0 configuration.yaml
 ```
 
-Using the resource definitions provided in [home-assistant-k8s.yaml], replace the configuration data in the Secret with the base64 output:
+Using the resource definitions provided in [kubernetes/home-assistant.yaml], replace the configuration data in the Secret with the base64 output:
 ```
 apiVersion: v1
 kind: Secret
@@ -43,22 +43,22 @@ spec:
 
 Create Kubernetes resources:
 ```
-$ kubectl apply -f home-assistant-k8s.yaml
+$ kubectl apply -f kubernetes/home-assistant.yaml
 ```
 
 ## Red Hat OpenShift Installation
 
 The application installation on Red Hat OpenShift leverages the use of imagestreams and ImageChange triggers on the DeploymentConfig to automatically update whenever a new image is available.
 
-Instead of using the resource definitions in home-assistant-k8s.yaml, use [home-assistant-ocp.yaml].  Create an imagestream that tracks upstream image updates, along with the OpenShift resources:
+Instead of using the resource definitions in `kubernetes/home-assistant.yaml`, use [openshift/home-assistant.yaml].  Create an imagestream that tracks upstream image updates, along with the OpenShift resources:
 ```
 $ oc import-image home-assistant --from=ghcr.io/home-assistant/home-assistant:latest --scheduled=true --confirm
-$ oc apply -f home-assistant-ocp.yaml
+$ oc apply -f openshift/home-assistant.yaml
 ```
 
 ## License
 GPLv3
 
 [configuration]: https://www.home-assistant.io/docs/configuration/
-[home-assistant-k8s.yaml]: home-assistant-k8s.yaml
-[home-assistant-ocp.yaml]: home-assistant-ocp.yaml
+[kubernetes/home-assistant.yaml]: kubernetes/home-assistant.yaml
+[openshift/home-assistant.yaml]: openshift/home-assistant.yaml

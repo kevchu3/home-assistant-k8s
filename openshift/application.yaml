@@ -11,7 +11,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: /
+    path: openshift
     repoURL: https://github.com/kevchu3/home-assistant-k8s.git
     targetRevision: HEAD
   syncPolicy:
