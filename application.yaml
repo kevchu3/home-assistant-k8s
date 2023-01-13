@@ -3,15 +3,15 @@ kind: Application
 metadata:
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
-  name: home-assistant
-  namespace: home-assistant
+  name: home-assistant-psilab
+  namespace: openshift-gitops
 spec:
   destination:
     namespace: home-assistant
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: argocd
+    path: /
     repoURL: https://github.com/kevchu3/home-assistant-k8s.git
     targetRevision: HEAD
   syncPolicy:
