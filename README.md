@@ -56,6 +56,14 @@ $ oc import-image home-assistant --from=ghcr.io/home-assistant/home-assistant:la
 $ oc apply -f openshift/home-assistant.yaml
 ```
 
+## Red Hat OpenShift GitOps Installation
+
+The application can also be installed via OpenShift GitOps (ArgoCD).  As a prerequisite, deploy the OpenShift GitOps operator and ArgoCD instance.  The following installation assumes the ArgoCD instance has been
+deployed to the `openshift-gitops` namespace:
+```
+$ oc apply -f openshift/argocd.application.yaml
+```
+
 ## License
 GPLv3
 
