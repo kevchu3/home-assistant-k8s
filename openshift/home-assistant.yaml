@@ -121,6 +121,7 @@ metadata:
   name: ha-ingress
   namespace: home-assistant
 spec:
+  ingressClassName: openshift-default
   rules:
   - host: home-assistant.example.com
     http:
